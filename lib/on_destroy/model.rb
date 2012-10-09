@@ -30,7 +30,7 @@ module OnDestroy
           # that is just a guess, based on the mark with deleted_at date example.
           self.is_deleted_if = Proc.new {|v| v != nil}
         else
-          self.is_deleted_if = Proc.new {|v| v == send(options[:to])}
+          self.is_deleted_if = Proc.new {|v| v == options[:to]}
         end
       end
     end

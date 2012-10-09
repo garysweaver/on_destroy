@@ -67,12 +67,12 @@ module OnDestroy
     # If self.is_deleted_if not a Proc, calls super.
     def destroyed?
       if self.is_deleted_if.is_a?(Proc)
-        self.is_deleted_if.call(send(self.to))
+        self.is_deleted_if.call(self.to)
       elsif self.is_deleted_if.nil? && !(self.defined_is_deleted_if == true)
         # will default to super only if self.is_deleted_if not defined by user
         super
       else
-        self.is_deleted_if == send(self.to)
+        self.is_deleted_if == self.to
       end
     end
 

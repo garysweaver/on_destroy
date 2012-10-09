@@ -31,23 +31,22 @@ Something similar to light version of rails3_acts_as_paranoid could be produced 
     default_scope where("deleted_at IS NOT NULL")
     on_destroy :do_not_delete, set: :deleted_at, to: lambda {Time.now}
 
-Do on_destroy for all models with:
+If you have the same deleted column and process for all models, instead of using on_destroy in every model, use configure:
 
     # Do it for everything
     OnDestroy.configure do
       self.do_not_delete = true
-      self.set = [:deleted]
-      self.to = true
+      self.on_destroy_options = [:do_not_delete, {set: :deleted_at, to: lambda {Time.now}]
     end
 
 If you want control over how it intuits how something is deleted (which is to look at the deleted date) use `:is_deleted_if` which can be a value, nil, or a Proc that takes the attribute value:
 
     on_destroy :do_not_delete, set: :some_column, to: lambda {Time.now}, is_deleted_if: {|c|Time.now > c} # provide time-travel resistent behavior of destroyed?/deleted?
-    on_destroy :do_not_delete, set: :some_column, to: 1 is_deleted_if: 1 # this is not necessary, as it will already check for 1 since you specified it in the :to
+    on_destroy :do_not_delete, set: :some_column, to: 1, is_deleted_if: 1 # this is not necessary, as it will already check for 1 since you specified it in the :to
 
 If you use a proc to set the value and a value of nil indicates that it should be deleted (which is kind of wierd), you'll need to set:
 
-    on_destroy :do_not_delete, set: :some_column, to: lambda {nil} is_deleted_if: nil
+    on_destroy :do_not_delete, set: :some_column, to: lambda {nil}, is_deleted_if: nil
 
 To call a normal-ish `destroy` method, use the `really_destroy` method. I think this is better than using `destroy!` because all of the other bang methods on ActiveRecord.base tend to just throw errors, not behave that differently, despite the `destroy!` method being a naming convention from acts_as_paranoid.
 

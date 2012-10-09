@@ -1,9 +1,7 @@
 module OnDestroy
   OPTIONS = [
     :do_not_delete,
-    :set,
-    :to,
-    :is_deleted_if
+    :on_destroy_options,
   ]
   
   class << self
@@ -12,9 +10,8 @@ module OnDestroy
   end
 end
 
-# Do it for everything
+# defaults
 #OnDestroy.configure do
-#  self.do_not_delete = true
-#  self.set = [:deleted]
-#  self.to = true
+#  self.do_not_delete = false
+#  self.on_destroy_options = nil
 #end

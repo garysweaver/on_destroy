@@ -28,9 +28,7 @@ module OnDestroy
       if self.on_destroy_options
         o_set = self.on_destroy_options[:set]
         o_to = self.on_destroy_options[:to]
-        if o_set
-          update_attributes! o_set => (o_to.is_a?(Proc) ? o_to.call : o_to)
-        end
+        update_attributes! o_set => (o_to.is_a?(Proc) ? o_to.call : o_to) unless o_set.nil?
         yield
       end
     end
@@ -58,11 +56,13 @@ module OnDestroy
         o_to = self.on_destroy_options[:to]
         if is_deleted_if.is_a?(Proc)
           send(o_set) == is_deleted_if.call
-        elsif o_to.is_a?(Proc)
-          # assume that a :to defined as a Proc is going to evaluate to a non-nil to indicate the model is null
-          send(o_set) != nil
-        else
-          send(o_set) == o_to
+        elsif !(o_set.nil?)
+          if o_to.is_a?(Proc)
+            # assume that a :to defined as a Proc is going to evaluate to a non-nil to indicate the model is null
+            send(o_set) != nil
+          else
+            send(o_set) == o_to
+          end
         end
       else
         super
